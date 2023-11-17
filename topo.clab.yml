@@ -1,0 +1,20 @@
+name: rdbg
+
+topology:
+  kinds:
+    srl:
+      startup-config: |
+        set / acl cpm-filter ipv4-filter entry 103 description "dlv debugger"
+        set / acl cpm-filter ipv4-filter entry 103 match protocol tcp
+        set / acl cpm-filter ipv4-filter entry 103 match destination-port value 7000
+        set / acl cpm-filter ipv4-filter entry 103 action accept
+      type: ixrd3
+      image: ghcr.io/nokia/srlinux:latest
+  nodes:
+    srl1:
+      kind: srl
+      binds:
+        - .:/dbg
+        - /home/mava/go/bin/dlv:/opt/dlv
+      ports:
+      - 7000:7000
